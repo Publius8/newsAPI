@@ -21,8 +21,12 @@ getAPI();
 const UiNavbar = (data) => {
     return `
         <div class="w-[260px] h-[900px] gap-[10px] flex flex-col" style="border: 2px solid red;" id="navbarElements">
-            <a href="./Main.html"><button class="cursor-pointer"><div class="flex flex-row items-center p-[16px]"><img src="./assets/images/Group 2 1.svg" class="ml-[12px]" alt="logo"><span class="ml-[15px]">Aster News</span></div></button></a>
+            <a href="./Main.html"><button class="cursor-pointer"><div class="flex flex-row items-center p-[16px]"><img src="./assets/images/Group 2 1.svg" class="ml-[12px]" alt="logo"><span class="ml-[15px]">Aster 
+            News</span></div></button></a>
+            
             <button class="cursor-pointer"><div class="flex flex-row items-center bg-[#2F9FF81A] rounded-r-[37px] w-[243px] h-[50px] p-[16px]"><div class="w-[6px] h-[6px] rounded-[50%] bg-[#2F9FF8] mr-[12px]"></div><img src="./assets/images/Vector (3).svg" alt="home"><span class="text-[15px] font-bold leading-[17.58px] text-left text-[#2F9FF8] ml-[15px]">${data[0].name}</span></div></button>
+
+
             <button class="cursor-pointer"><div class="flex flex-row items-center w-[243px] h-[50px] p-[16px]"><img src="./assets/images/globe.svg" class="ml-[16px]" alt="globe"><span class="text-[15px] font-normal leading-[17.58px] text-left text-[#072D4B] ml-[15px]">${data[1].name}</span></div></button>
             <button class="cursor-pointer"><div class="flex flex-row items-center w-[243px] h-[50px] p-[16px]"><img src="./assets/images/briefcase.svg" class="ml-[16px]" alt="case"><span class="text-[15px] font-normal leading-[17.58px] text-left text-[#072D4B] ml-[15px]">${data[2].name}</span></div></button>
             <button class="cursor-pointer"><div class="flex flex-row items-center w-[243px] h-[50px] p-[16px]"><img src="./assets/images/activity.svg" class="ml-[16px]" alt="activity"><span class="text-[15px] font-normal leading-[17.58px] text-left text-[#072D4B] ml-[15px]">${data[3].name}</span></div></button>
@@ -42,7 +46,57 @@ const UiNavbar = (data) => {
     `;
 };
 
+let newsCardHere = document.querySelector("#newsCardHere");
 
+
+const getAPINews = () => {
+    let URL = `https://all-api.bitcode.az/api/news`;
+    newsCardHere.innerHTML = loader;
+    fetch(URL)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // alert(data.data.length);
+            if (data.data && data.data.length > 0) {
+                newsCardHere.innerHTML = data.data.map(news => cardIU(news)).join('');
+            } else {
+                newsCardHere.innerHTML = 'No news available at the moment.';
+            }
+        })
+        .catch(error => console.error('Error fetching data:', error));
+};
+getAPINews();
+
+const cardIU = (news) => {
+    return `
+            <div class="w-[376px] h-[191px] bg-[#FFFFFF] flex justify-center flex-col" style="border-style: solid; border-color: #000000; border-radius: 4px; box-shadow: 0px 2px 20px 0px #0000000A;">
+                <div class="flex flex-row items-center justify-center relative">
+                    <a class="absolute w-[100%] h-[100%]" href="./index.html"></a>
+                    <div class="flex flex-col justify-center items-center">
+                        <h3 class="text-[17px] font-medium leading-6 text-left text-[#072D4B]">${news.title}</h3>
+                        <p class="text-[14px] font-normal leading-[22px] text-left text-[#072D4B] mt-[10px]" style="opacity: 80%;">${news.description}</p>
+                    </div>
+                    <div class="w-[400px] h-[auto] flex items-center justify-center">
+                        <img class="w-[400px] h-[auto] object-cover" src="${news.photo}" style="border-radius: 4px 4px 4px 4px;" alt="${news.category.slug}">
+                    </div>
+                </div>
+                <div class="flex flex-row justify-around items-center mt-[15px]">
+                    <span class="text-[12px] font-normal leading-[22px] text-left text-[#072D4B]" style="opacity: 80%;">${news.category.name}</span>
+                    <div class="w-[2.03px] h-[2px] bg-[#2F9FF8]" style="border-radius: 50%;"></div>
+                    <span class="text-[12px] font-normal leading-[22px] text-left text-[#072D4B]" style="opacity: 80%;">42 mins ago</span>
+                    <button class="flex flex-row gap-[10px] items-center text-[12px] font-normal leading-[22px] text-left text-[#0768B5]"><img src="./assets/images/share.svg" alt="share">Share</button>
+                    <button class="flex flex-row gap-[10px] items-center text-[12px] font-normal leading-[22px] text-left text-[#0768B5]"><img src="./assets/images/pocket.svg" alt="read">Read Later</button>
+                </div>
+            </div>
+
+            
+        
+    `;
+}
 
 
 let clickComment = document.querySelector("#clickComment");
@@ -62,6 +116,8 @@ $(document).ready(function() {
         $("#hideComment").toggle("slow");
     });
 });
+
+
 
 // let addCOmment = document.querySelector("#addCOmment");
 // let textArea = document.querySelector("#textArea");
